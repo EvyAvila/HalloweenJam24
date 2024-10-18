@@ -114,6 +114,54 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""PlayerArms"",
+            ""id"": ""6aefad2c-ad1b-48e9-b847-6d6eaa4dd634"",
+            ""actions"": [
+                {
+                    ""name"": ""LeftArm"",
+                    ""type"": ""Button"",
+                    ""id"": ""68c38f7f-7cc6-48fc-ba70-f4092ded004d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""RightArm"",
+                    ""type"": ""Button"",
+                    ""id"": ""6c74c863-426a-4b2f-8adc-ef270bae6b59"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""348b0a25-77a3-4613-a744-480af187529e"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LeftArm"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e61c852a-2e11-4c95-bd5c-dde84dbf6f67"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RightArm"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -128,6 +176,10 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Movement = m_Player.FindAction("Movement", throwIfNotFound: true);
         m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
+        // PlayerArms
+        m_PlayerArms = asset.FindActionMap("PlayerArms", throwIfNotFound: true);
+        m_PlayerArms_LeftArm = m_PlayerArms.FindAction("LeftArm", throwIfNotFound: true);
+        m_PlayerArms_RightArm = m_PlayerArms.FindAction("RightArm", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -239,6 +291,60 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         }
     }
     public PlayerActions @Player => new PlayerActions(this);
+
+    // PlayerArms
+    private readonly InputActionMap m_PlayerArms;
+    private List<IPlayerArmsActions> m_PlayerArmsActionsCallbackInterfaces = new List<IPlayerArmsActions>();
+    private readonly InputAction m_PlayerArms_LeftArm;
+    private readonly InputAction m_PlayerArms_RightArm;
+    public struct PlayerArmsActions
+    {
+        private @PlayerControls m_Wrapper;
+        public PlayerArmsActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @LeftArm => m_Wrapper.m_PlayerArms_LeftArm;
+        public InputAction @RightArm => m_Wrapper.m_PlayerArms_RightArm;
+        public InputActionMap Get() { return m_Wrapper.m_PlayerArms; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(PlayerArmsActions set) { return set.Get(); }
+        public void AddCallbacks(IPlayerArmsActions instance)
+        {
+            if (instance == null || m_Wrapper.m_PlayerArmsActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_PlayerArmsActionsCallbackInterfaces.Add(instance);
+            @LeftArm.started += instance.OnLeftArm;
+            @LeftArm.performed += instance.OnLeftArm;
+            @LeftArm.canceled += instance.OnLeftArm;
+            @RightArm.started += instance.OnRightArm;
+            @RightArm.performed += instance.OnRightArm;
+            @RightArm.canceled += instance.OnRightArm;
+        }
+
+        private void UnregisterCallbacks(IPlayerArmsActions instance)
+        {
+            @LeftArm.started -= instance.OnLeftArm;
+            @LeftArm.performed -= instance.OnLeftArm;
+            @LeftArm.canceled -= instance.OnLeftArm;
+            @RightArm.started -= instance.OnRightArm;
+            @RightArm.performed -= instance.OnRightArm;
+            @RightArm.canceled -= instance.OnRightArm;
+        }
+
+        public void RemoveCallbacks(IPlayerArmsActions instance)
+        {
+            if (m_Wrapper.m_PlayerArmsActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IPlayerArmsActions instance)
+        {
+            foreach (var item in m_Wrapper.m_PlayerArmsActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_PlayerArmsActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public PlayerArmsActions @PlayerArms => new PlayerArmsActions(this);
     private int m_ControllerSchemeIndex = -1;
     public InputControlScheme ControllerScheme
     {
@@ -252,5 +358,10 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     {
         void OnMovement(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
+    }
+    public interface IPlayerArmsActions
+    {
+        void OnLeftArm(InputAction.CallbackContext context);
+        void OnRightArm(InputAction.CallbackContext context);
     }
 }

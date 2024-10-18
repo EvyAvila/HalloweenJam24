@@ -92,6 +92,54 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "PlayerArms",
+            "id": "6aefad2c-ad1b-48e9-b847-6d6eaa4dd634",
+            "actions": [
+                {
+                    "name": "LeftArm",
+                    "type": "Button",
+                    "id": "68c38f7f-7cc6-48fc-ba70-f4092ded004d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "RightArm",
+                    "type": "Button",
+                    "id": "6c74c863-426a-4b2f-8adc-ef270bae6b59",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "348b0a25-77a3-4613-a744-480af187529e",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LeftArm",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e61c852a-2e11-4c95-bd5c-dde84dbf6f67",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RightArm",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [
